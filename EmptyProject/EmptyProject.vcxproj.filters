@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{36a58bc6-8980-4a46-aa00-8ad3993ff9fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SpinLock.h" />
+    <ClInclude Include="ProducerConsumer.h" />
+    <ClInclude Include="TestLock.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SpinLock.cpp" />
+    <ClCompile Include="ProducerConsumer.cpp" />
+    <ClCompile Include="TestLock.cpp" />
+  </ItemGroup>
+</Project>
