@@ -36,6 +36,9 @@
     <ClCompile Include="RWLock.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
+    <ClCompile Include="DeadLockProfiler.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="RWLock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadLockProfiler.h">
       <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>

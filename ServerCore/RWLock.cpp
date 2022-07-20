@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "RWLock.h"
 #include "CoreTLS.h"
+#include "DeadLockProfiler.h"
 
-
-void RWLock::WriteLock()
+void RWLock::WriteLock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->push_lock(name);
+#endif
+
 	//동일한 쓰레드가 소유하고 있다면 무조건 성공!
 	const uint32 lock_thread_id = (lock_flag_.load() & WRITE_THREAD_MASK) >> 16;
 	if (LThreadId == lock_thread_id)
@@ -38,8 +42,12 @@ void RWLock::WriteLock()
 	}
 }
 
-void RWLock::WriteUnlock()
+void RWLock::WriteUnlock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->pop_lock(name);
+#endif
+
 	// ReadLock 다 풀기 전에는 WriteUnlock 불가능
 	if (lock_flag_.load() & READ_COUNT_MASK != 0)
 	{
@@ -53,8 +61,12 @@ void RWLock::WriteUnlock()
 	}
 }
 
-void RWLock::ReadLock()
+void RWLock::ReadLock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->push_lock(name);
+#endif
+
 	//동일한 쓰레드가 소유하고 있다면 무조건 성공
 	//아무도 소유하고 있지 않을 때 경합해서 공유 카운트를 올린다.
 	const uint32 lock_thread_id = (lock_flag_.load() & WRITE_THREAD_MASK) >> 16;
@@ -87,8 +99,12 @@ void RWLock::ReadLock()
 	}
 }
 
-void RWLock::ReadUnlock()
+void RWLock::ReadUnlock(const char* name)
 {
+#if _DEBUG
+	GDeadLockProfiler->pop_lock(name);
+#endif
+
 	if ((lock_flag_.fetch_sub(1) & READ_COUNT_MASK) == 0)
 	{
 
