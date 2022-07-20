@@ -147,12 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h" />
     <ClInclude Include="ProducerConsumer.h" />
     <ClInclude Include="SpinLock.h" />
     <ClInclude Include="TestLock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProducerConsumer.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="SpinLock.cpp" />
     <ClCompile Include="TestLock.cpp" />
   </ItemGroup>

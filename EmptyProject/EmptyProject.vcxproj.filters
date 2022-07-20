@@ -6,13 +6,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SpinLock.h" />
     <ClInclude Include="ProducerConsumer.h" />
+    <ClInclude Include="SpinLock.h" />
     <ClInclude Include="TestLock.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SpinLock.cpp" />
     <ClCompile Include="ProducerConsumer.cpp" />
+    <ClCompile Include="SpinLock.cpp" />
     <ClCompile Include="TestLock.cpp" />
+    <ClCompile Include="main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
