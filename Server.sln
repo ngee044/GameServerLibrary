@@ -4,12 +4,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31605.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\GameServer.vcxproj", "{AE3C294E-0687-4756-A907-83D6A6C6DDC1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C} = {A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DummyClient", "DummyClient\DummyClient.vcxproj", "{BB7F3619-F347-4951-94B3-B42C36859391}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C} = {A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerCore", "ServerCore\ServerCore.vcxproj", "{A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EmptyProject", "EmptyProject\EmptyProject.vcxproj", "{3866468D-EC78-4442-B701-BE04224491E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C} = {A0E9E65B-DE51-4AF6-A77B-E2F2A885B41C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

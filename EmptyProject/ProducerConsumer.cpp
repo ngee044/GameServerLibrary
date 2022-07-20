@@ -30,7 +30,7 @@ void Consumer()
 {
 	while (true)
 	{
-		::WaitForSingleObject(handle, INFINITY);
+		::WaitForSingleObject(handle, (DWORD)INFINITY);
 
 		std::unique_lock<std::mutex> lck(m);
 		if (!q.empty())
@@ -41,16 +41,16 @@ void Consumer()
 		}
 	}
 }
-
-int main()
-{
-	handle = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-
-	std::thread t1(Producer);
-	std::thread t2(Consumer);
-
-	t1.join();
-	t2.join();
-
-	::CloseHandle(handle);
-}
+//
+//int main()
+//{
+//	handle = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+//
+//	std::thread t1(Producer);
+//	std::thread t2(Consumer);
+//
+//	t1.join();
+//	t2.join();
+//
+//	::CloseHandle(handle);
+//}
