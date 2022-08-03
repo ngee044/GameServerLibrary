@@ -81,7 +81,16 @@ CoreGlobal Core;
 
 int main()
 {
-	
+	SYSTEM_INFO info;
+	::GetSystemInfo(&info);
+
+	std::cout << info.dwPageSize << std::endl;
+	std::cout << info.dwAllocationGranularity << std::endl;
+
+	int* test = (int*)::VirtualAlloc(NULL, 4, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	*test = 100;
+	::VirtualFree(test, 0, MEM_RELEASE);
+
 	for (auto i = 0; i < 2; ++i)
 	{
 		GThreadManager->Launch(ThreadWrite);
