@@ -81,6 +81,7 @@ CoreGlobal Core;
 
 int main()
 {
+#if 0
 	SYSTEM_INFO info;
 	::GetSystemInfo(&info);
 
@@ -100,8 +101,9 @@ int main()
 	{
 		GThreadManager->Launch(ThreadRead);
 	}
+#endif
 
 	GThreadManager->Join();
-
+	std::cout << __func__ << "()" << std::endl;
 	return 0;
 } 

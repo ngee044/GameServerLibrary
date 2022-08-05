@@ -33,6 +33,7 @@ int get_prime_count(int start, int end)
 
 int main()
 {
+#if 0
 	const int MAX_NUMBER = 1'000'000;
 
 	std::vector<std::thread> threads;
@@ -58,6 +59,6 @@ int main()
 	}
 
 	std::cout << prime_count << std::endl;
-
+#endif
 	return 0; 
 }

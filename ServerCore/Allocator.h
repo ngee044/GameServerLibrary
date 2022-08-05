@@ -21,6 +21,17 @@ public:
 };
 
 /*
+pool allocator
+*/
+
+class PoolAllocator
+{
+public:
+	static void* alloc(int32 size);
+	static void release(void* ptr);
+};
+
+/*
 STL Allocator
 */
 

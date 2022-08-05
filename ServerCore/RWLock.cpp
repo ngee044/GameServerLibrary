@@ -49,7 +49,7 @@ void RWLock::WriteUnlock(const char* name)
 #endif
 
 	// ReadLock 다 풀기 전에는 WriteUnlock 불가능
-	if (lock_flag_.load() & READ_COUNT_MASK != 0)
+	if ((lock_flag_.load() & READ_COUNT_MASK) != 0)
 	{
 		CRASH("INVALID_UNLOCK_ORDER");
 	}
