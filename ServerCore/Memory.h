@@ -28,12 +28,18 @@ private:
 template<typename Type, typename... Args>
 Type* xnew(Args&&... args)
 {
-	Type* memory = static_cast<Type*>(BaseAllocator::alloc(sizeof(Type)));
+	Type* memory = static_cast<Type*>(PoolAllocator::alloc(sizeof(Type)));
 	return memory;
 }
 
 template<typename Type>
 void xdelete(Type* obj)
 {
-	BaseAllocator::release(obj);
+	PoolAllocator::release(obj);
+}
+
+template<typename Type>
+std::shared_ptr<Type> xmake_shared()
+{
+	return shared_ptr<Type>{ xnew<Type>(), xdelete<Type> };
 }

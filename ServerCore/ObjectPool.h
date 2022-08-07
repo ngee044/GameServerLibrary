@@ -1,5 +1,6 @@
 #pragma once
 #include "Types.h"
+#include "Memory.h"
 #include "MemoryPool.h"
 
 template<typename Type>
@@ -9,7 +10,13 @@ public:
 	template<typename... Args>
 	static Type* pop(Args&&... args);
 	{
+#ifdef _STOMP
+		MemoryHeader* ptr = reinterpret_cast<MemoryHeader*>(StompAllocator::alloc(alloc_size_));
+		Type* memory = static_cast<Type*>(MemoryHeader::AttachHeader(ptr, alloc_size_));
+#else
 		Type* memory = static_cast<Type*>(MemoryHeader::AttachHeader(pool_.pop(), alloc_size_));
+#endif
+		
 		new(memory)Type(std::forward<Args>(args)...); //placement new
 		return memory;
 	}
@@ -17,7 +24,11 @@ public:
 	static void push(Type* obj) 
 	{
 		obj->~Type();
+#ifdef _STOMP
+		StompAllocator::release(MemoryHeader::DetachHeader(obj));
+#else
 		pool_.push(MemoryHeader::DetachHeader(obj));
+#endif
 	}
 
 	static shared_ptr<Type> make_shared()

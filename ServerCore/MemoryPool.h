@@ -40,7 +40,7 @@ public:
 private:
 	SLIST_HEADER header_;
 	int32 alloc_size_ = 0;
-	std::atomic<int32> alloc_count = 0;
-
+	std::atomic<int32> use_count_ = 0;
+	std::atomic<int32> reserve_count_ = 0;
 };
 
