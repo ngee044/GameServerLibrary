@@ -5,27 +5,27 @@
 
 ThreadManager::ThreadManager()
 {
-	InitTLS();
+	init_tls();
 }
 
 ThreadManager::~ThreadManager()
 {
-	Join();
+	join();
 }
 
-void ThreadManager::Launch(std::function<void(void)> callback)
+void ThreadManager::launch(std::function<void(void)> callback)
 {
 	LockGuard guard(lock_);
 
 	threads_.push_back(thread([=]()
 		{
-			InitTLS();
+			init_tls();
 			callback();
-			DestroyTLS();
+			destroy_tls();
 		}));
 }
 
-void ThreadManager::Join()
+void ThreadManager::join()
 {
 	for (auto& t : threads_)
 	{
@@ -37,13 +37,13 @@ void ThreadManager::Join()
 	threads_.clear();
 }
 
-void ThreadManager::InitTLS()
+void ThreadManager::init_tls()
 {
 	static Atomic<uint32> SThreadId = 1;
 	LThreadId = SThreadId.fetch_add(1);
 }
 
-void ThreadManager::DestroyTLS()
+void ThreadManager::destroy_tls()
 {
 
 }

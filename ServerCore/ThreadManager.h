@@ -9,11 +9,12 @@ public:
 	ThreadManager();
 	~ThreadManager();
 
-	void Launch(std::function<void(void)> callback);
-	void Join();
-
-	static void InitTLS();
-	static void DestroyTLS();
+	void launch(std::function<void(void)> callback);
+	void join();
+	
+	//tls is thread local storage
+	static void init_tls();
+	static void destroy_tls();
 
 private:
 	Mutex lock_;

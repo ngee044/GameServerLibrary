@@ -6,6 +6,7 @@
 #include "pch.h"
 #include "CoreMacro.h"
 #include "ThreadManager.h"
+#include "Memory.h"
 
 
 class TestLock
@@ -77,6 +78,13 @@ void ThreadRead()
 	}
 }
 
+
+class Knight
+{
+public:
+	int32 hp_ = rand() % 1000;
+};
+
 CoreGlobal Core;
 
 int main()
@@ -101,9 +109,28 @@ int main()
 	{
 		GThreadManager->Launch(ThreadRead);
 	}
-#endif
 
 	GThreadManager->Join();
 	std::cout << __func__ << "()" << std::endl;
+#endif
+
+	for (int32 i = 0; i < 2; ++i)
+	{
+		GThreadManager->launch([]()
+			{
+				while (true)
+				{
+					Knight* knight = xnew<Knight>();
+					cout << knight->hp_ << endl;
+
+					this_thread::sleep_for(10ms);
+					xdelete(knight);
+				}
+			});
+	}
+
+	GThreadManager->join();
+
 	return 0;
-} 
+}
+

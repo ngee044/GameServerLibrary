@@ -168,6 +168,7 @@
     <ClInclude Include="Container.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="MemoryPool.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RWLock.h" />

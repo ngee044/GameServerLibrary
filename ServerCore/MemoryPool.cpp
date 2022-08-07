@@ -3,45 +3,40 @@
 
 MemoryPool::MemoryPool(int32 alloc_size) : alloc_size_(alloc_size)
 {
+	::InitializeSListHead(&header_); //초기화 작업
 }
 
 MemoryPool::~MemoryPool()
 {
-	while (!queue_.empty())
+	while (MemoryHeader* memory = static_cast<MemoryHeader*>(::InterlockedPopEntrySList(&header_)))
 	{
-		MemoryHeader* header = queue_.front();
-		queue_.pop();
-		::free(header);
+		::_aligned_free(memory);
 	}
 }
 
 void MemoryPool::push(MemoryHeader* ptr)
 {
+	ptr->alloc_size = 0;
+	::InterlockedPushEntrySList(&header_, static_cast<PSLIST_ENTRY>(ptr));
+
+	alloc_count.fetch_sub(1);
 }
 
 MemoryHeader* MemoryPool::pop()
 {
-	MemoryHeader* header = nullptr;
-	{
-		WRITE_LOCK;
+	MemoryHeader* memory = static_cast<MemoryHeader*>(::InterlockedPopEntrySList(&header_));
 
-		if (!queue_.empty())
-		{
-			header = queue_.front();
-			queue_.pop();
-		}
-	}
-
-	if (header == nullptr)
+	
+	if (memory == nullptr)
 	{
-		header = reinterpret_cast<MemoryHeader*>(::malloc(alloc_size_));
+		memory = reinterpret_cast<MemoryHeader*>(::_aligned_malloc(alloc_size_, SLIST_ALIGNMENT));
 	}
 	else
 	{
-		ASSERT_CRASH(header->alloc_size == 0);
+		ASSERT_CRASH(memory->alloc_size == 0);
 	}
 
 	alloc_count.fetch_add(1);
 
-	return header;
+	return memory;
 }
