@@ -22,7 +22,7 @@ public:
 
 	static shared_ptr<Type> make_shared()
 	{
-		std::shared_ptr<Type> ptr = { Pop(), Push };
+		std::shared_ptr<Type> ptr = { pop(), push };
 		return ptr;
 	}
 
