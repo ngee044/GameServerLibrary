@@ -173,6 +173,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="RWLock.h" />
     <ClInclude Include="ThreadManager.h" />
+    <ClInclude Include="TypeCast.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
