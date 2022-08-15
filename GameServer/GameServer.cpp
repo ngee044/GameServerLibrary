@@ -1,136 +1,82 @@
-#include <atomic>
-#include <mutex>
-#include <Windows.h>
-#include <future>
-
 #include "pch.h"
+
+#include <Windows.h>
+#include <iostream>
+#include <windows.h>
+#include <WinSock2.h>
+#include <MSWSock.h>
+#include <WS2tcpip.h>
+
 #include "CoreMacro.h"
 #include "ThreadManager.h"
 #include "Memory.h"
 
+#pragma comment(lib, "ws2_32.lib")
 
-class TestLock
+void error_message()
 {
-	USE_LOCK;
-
-public:
-	int32 TestRead()
-	{
-		READ_LOCK;
-
-		if (queue_.empty())
-			return -1;
-
-		return queue_.front();
-	}
-
-	void TestPush()
-	{
-		WRITE_LOCK;
-
-		queue_.push(rand() % 100);
-	}
-
-	void TestPop()
-	{
-		WRITE_LOCK;
-
-		if (queue_.empty() == false)
-		{
-			queue_.pop();
-		}
-	}
-
-private:
-	std::queue<int32> queue_;
-};
-
-
-void ThreadMain()
-{
-	while (true)
-	{
-		std::cout << "Hello ! I am thread " << LThreadId << endl;
-		this_thread::sleep_for(1s);
-	}
+	int32 err_code = ::WSAGetLastError();
+	std::cout << "socket error code : " << err_code << std::endl;
 }
-
-TestLock testLock;
-
-void ThreadWrite()
-{
-	while (true)
-	{
-		testLock.TestPush();
-		std::this_thread::sleep_for(1ms);
-		testLock.TestPop();
-
-	}
-}
-
-void ThreadRead()
-{
-	while(true)
-	{
-		int32 value = testLock.TestRead();
-		std::cout << value << std::endl;
-		std::this_thread::sleep_for(1ms);
-	}
-}
-
-
-class Knight
-{
-public:
-	int32 hp_ = rand() % 1000;
-};
-
-CoreGlobal Core;
 
 int main()
 {
-#if 0
-	SYSTEM_INFO info;
-	::GetSystemInfo(&info);
-
-	std::cout << info.dwPageSize << std::endl;
-	std::cout << info.dwAllocationGranularity << std::endl;
-
-	int* test = (int*)::VirtualAlloc(NULL, 4, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-	*test = 100;
-	::VirtualFree(test, 0, MEM_RELEASE);
-
-	for (auto i = 0; i < 2; ++i)
+	//왼쪽 초기화 (ws2_32 라이브러리 초기화)
+	//관련 정보 wsa_data 채워짐
+	WSAData wsa_data;
+	if (::WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
 	{
-		GThreadManager->Launch(ThreadWrite);
+		return 0;
 	}
 
-	for (auto i = 0; i < 5; ++i)
+	SOCKET listen_socket = ::socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_socket == INVALID_SOCKET)
 	{
-		GThreadManager->Launch(ThreadRead);
+		error_message();
+		return 0;
 	}
 
-	GThreadManager->Join();
-	std::cout << __func__ << "()" << std::endl;
-#endif
+	SOCKADDR_IN server_addr;
+	memset(&server_addr, 0, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_addr.s_addr = ::htonl(INADDR_ANY); // 알아서 해줘~
+	server_addr.sin_port = ::htons(7777); //host to network short // 80 : HTTP
 
-	for (int32 i = 0; i < 2; ++i)
+
+	if (::bind(listen_socket, (SOCKADDR*)&server_addr, sizeof(server_addr)) == SOCKET_ERROR)
 	{
-		GThreadManager->launch([]()
-			{
-				while (true)
-				{
-					Knight* knight = xnew<Knight>();
-					cout << knight->hp_ << endl;
-
-					this_thread::sleep_for(10ms);
-					xdelete(knight);
-				}
-			});
+		error_message();
+		return 0;
 	}
 
-	GThreadManager->join();
+	if (::listen(listen_socket, 10) == SOCKET_ERROR) // 대기열 설정
+	{
+		error_message();
+		return 0;
+	}
 
+	while (true)
+	{
+		SOCKADDR_IN client_addr;
+		memset(&client_addr, 0, sizeof(client_addr));
+
+		int32 addr_len = sizeof(client_addr);
+		SOCKET client_socket = accept(listen_socket, (SOCKADDR*)&client_addr, &addr_len);
+		if (client_socket == INVALID_SOCKET)
+		{
+			error_message();
+			return 0;
+		}
+
+		char ip_address[16];
+		::inet_ntop(AF_INET, &client_addr.sin_addr, ip_address, sizeof(ip_address));
+		std::cout << "Client Coinnected! iP = " << ip_address << std::endl;
+
+		//TODO
+	}
+
+
+	::WSACleanup();
 	return 0;
 }
 
