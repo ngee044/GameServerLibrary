@@ -9,7 +9,9 @@
 
 void error_message()
 {
+
 	int32 err_code = ::WSAGetLastError();
+	std::cout << "client" << std::endl;
 	std::cout << "socket error code : " << err_code << std::endl;
 }
 
@@ -36,7 +38,6 @@ int main()
 	//server_addr.sin_addr.s_addr = ::inet_addr("127.0.0.1");
 	::inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
 	server_addr.sin_port = ::htons(7777); //host to network short // 80 : HTTP
-	::WSACleanup();
 
 	if (::connect(client_socket, (SOCKADDR*)&server_addr, sizeof(server_addr)) == SOCKET_ERROR)
 	{
@@ -49,6 +50,7 @@ int main()
 	while (true)
 	{
 		//TODO.......
+		
 		std::this_thread::sleep_for(1s);
 	}
 
