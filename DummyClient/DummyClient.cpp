@@ -50,7 +50,28 @@ int main()
 	while (true)
 	{
 		//TODO.......
-		
+		char send_buffer[100] = "hello world!!";
+		auto result = ::send(client_socket, send_buffer, sizeof(send_buffer), 0);
+		if (result == SOCKET_ERROR)
+		{
+			error_message();
+			return 0;
+		}
+
+		cout << "send data len = " << sizeof(send_buffer) << endl;
+
+		char recv_buffer[1000];
+
+		auto recv_len = ::recv(client_socket, recv_buffer, sizeof(recv_buffer), 0);
+		if (recv_len <= 0)
+		{
+			error_message();
+			return 0;
+		}
+
+		cout << "Recv Data! data = " << recv_buffer << endl;
+		cout << "Recv Data! len = " << recv_len << endl;
+
 		std::this_thread::sleep_for(1s);
 	}
 

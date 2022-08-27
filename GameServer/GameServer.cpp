@@ -16,6 +16,7 @@
 void error_message()
 {
 	int32 err_code = ::WSAGetLastError();
+	std::cout << "server" << std::endl;
 	std::cout << "socket error code : " << err_code << std::endl;
 }
 
@@ -56,8 +57,8 @@ int main()
 	}
 
 	while (true)
-	{
-		SOCKADDR_IN client_addr;
+	{ 
+		SOCKADDR_IN client_addr; //IPv4
 		memset(&client_addr, 0, sizeof(client_addr));
 
 		int32 addr_len = sizeof(client_addr);
@@ -73,6 +74,31 @@ int main()
 		std::cout << "Client Coinnected! iP = " << ip_address << std::endl;
 
 		//TODO
+
+		while (true)
+		{
+			char recv_buffer[1000];
+
+			auto recv_len = ::recv(client_socket, recv_buffer, sizeof(recv_buffer), 0);
+			if (recv_len <= 0)
+			{
+				error_message();
+				return 0;
+			
+			}
+
+			cout << "Recv Data! data = " << recv_buffer << endl;
+			cout << "Recv Data! len = " << recv_len << endl;
+
+			auto result = ::send(client_socket, recv_buffer, recv_len, 0);
+			if (result == SOCKET_ERROR)
+			{
+				error_message();
+				return 0;
+			}
+
+		}
+
 	}
 
 
