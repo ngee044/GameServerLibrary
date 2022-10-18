@@ -141,6 +141,8 @@ int main()
 
 	return 0;
 #elif 1
+	std::this_thread::sleep_for(2s);
+
 	WSAData wsa_data;
 	if (::WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
 	{
