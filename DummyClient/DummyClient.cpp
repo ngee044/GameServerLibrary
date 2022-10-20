@@ -191,46 +191,36 @@ int main()
 	std::cout << "Connected to server!" << std::endl;
 
 	char send_buffer[100] = "hello world";
+	WSAEVENT wsa_event = ::WSACreateEvent();
+	WSAOVERLAPPED overlapped = {};
+	overlapped.hEvent = wsa_event;
+
 
 	//send
 	while (true)
 	{
-		if (::send(client_socket, send_buffer, sizeof(send_buffer), 0) == SOCKET_ERROR)
+		WSABUF wsa_buf;
+		wsa_buf.buf = send_buffer;
+		wsa_buf.len = 100;
+
+		DWORD send_len = 0;
+		DWORD flags = 0;
+		if (::WSASend(client_socket, &wsa_buf, 1, &send_len, flags, &overlapped, nullptr) == SOCKET_ERROR)
 		{
-			if (::WSAGetLastError() == WSAEWOULDBLOCK)
+			if (::WSAGetLastError() == WSA_IO_PENDING)
 			{
-				continue;
+				//Pending
+				::WSAWaitForMultipleEvents(1, &wsa_event, TRUE, WSA_INFINITE, FALSE);
+				::WSAGetOverlappedResult(client_socket, &overlapped, &send_len, FALSE, &flags);
 			}
-			//Error
-			break;
+			else
+			{
+				//ÁøÂ¥ ¹®Á¦ÀÏ °æ¿ì
+				break;
+			}
 		}
+
 		std::cout << "Send Data ! Len = " << sizeof(send_buffer) << std::endl;
-
-		//recv
-		while (true)
-		{
-			char recv_buffer[1000];
-			int32 recv_len = ::recv(client_socket, recv_buffer, sizeof(recv_buffer), 0);
-			if (recv_len == SOCKET_ERROR)
-			{
-				//do nonblocking
-				if (::WSAGetLastError() == WSAEWOULDBLOCK)
-				{
-					continue;
-				}
-				//Error
-				break;
-			}
-			else if (recv_len == 0)
-			{
-				//disconnect (¿¬°á²÷±è)
-				break;
-			}
-
-			std::cout << "Recv Data Len = " << recv_len << std::endl;
-
-			break;
-		}
 
 		std::this_thread::sleep_for(1s);
 	}
