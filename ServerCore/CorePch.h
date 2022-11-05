@@ -20,7 +20,16 @@
 
 #include "RWLock.h"
 
-using namespace std;
+//using namespace std;
 
+#include "CoreMacro.h"
+#include "Memory.h"
+
+#pragma comment(lib, "ws2_32.lib")
+
+#include <windows.h>
+#include <WinSock2.h>
+#include <MSWSock.h>
+#include <WS2tcpip.h>
 
 void HelloWorld();
