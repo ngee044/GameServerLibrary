@@ -1,6 +1,7 @@
 #pragma once
 
 
+class IocpObject;
 class Session;
 
 enum class EventType : uint8
@@ -20,10 +21,9 @@ public:
 	IocpEvent(EventType type);
 
 	void init();
-	EventType get_type() { return type_; }
 
-protected:
-	EventType type_;
+	EventType event_type_;
+	std::shared_ptr<IocpObject> owner;
 
 };
 
@@ -45,11 +45,7 @@ class AcceptEvent : public IocpEvent
 public:
 	AcceptEvent() : IocpEvent(EventType::Accept) {}
 
-	void set_session(Session* session) { session_ = session; }
-	Session* get_session() { return session_; }
-
-private:
-	Session* session_ = nullptr;
+	std::shared_ptr<Session> session_ = nullptr;
 };
 
 /*

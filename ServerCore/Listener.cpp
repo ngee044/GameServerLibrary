@@ -3,7 +3,7 @@
 #include "SocketUtils.h"
 #include "IocpEvent.h"
 #include "Session.h"
-
+#include "Service.h"
 
 Listener::~Listener()
 {
@@ -15,15 +15,21 @@ Listener::~Listener()
 	}
 }
 
-bool Listener::start_accept(NetAddress net_address)
+bool Listener::start_accept(std::shared_ptr<ServerService> service)
 {
+	service_ = service;
+	if (service_ == nullptr)
+	{
+		return false;
+	}
+
 	socket_ = SocketUtils::create_socket();
 	if (socket_ == INVALID_SOCKET)
 	{
 		return false;
 	}
 
-	if (g_iocp_core.iocp_register(this) == false)
+	if (service_->get_iocp_core()->iocp_register(shared_from_this()) == false)
 	{
 		return false;
 	}
@@ -38,7 +44,7 @@ bool Listener::start_accept(NetAddress net_address)
 		return false;
 	}
 
-	if (SocketUtils::bind(socket_, net_address) == false)
+	if (SocketUtils::bind(socket_, service_->get_net_address()) == false)
 	{
 		return false;
 	}
@@ -48,15 +54,16 @@ bool Listener::start_accept(NetAddress net_address)
 		return false;
 	}
 
-	const int32 accept_count = 1;
+	const int32 accept_count = service_->get_max_session_count();
 	for (int32 i = 0; i < accept_count; i++)
 	{
 		AcceptEvent* accept_event = xnew<AcceptEvent>();
+		accept_event->owner = shared_from_this();
 		v_accept_events_.push_back(accept_event);
 		register_accept(accept_event);
 	}
 
-	return false;
+	return true;
 }
 
 void Listener::close_socket()
@@ -71,17 +78,17 @@ HANDLE Listener::get_handle()
 
 void Listener::iocp_dispatch(IocpEvent* iocp_event, int32 num_of_bytes)
 {
-	ASSERT_CRASH(iocp_event->get_type() == EventType::Accept);
+	ASSERT_CRASH(iocp_event->event_type_ == EventType::Accept);
 	AcceptEvent* accept_event = static_cast<AcceptEvent*>(iocp_event);
 	process_accept(accept_event);
 }
 
 void Listener::register_accept(AcceptEvent* accept_event)
 {
-	auto session = xnew<Session>();
+	auto session = service_->create_session(); //register iocp
 
 	accept_event->init();
-	accept_event->set_session(session);
+	accept_event->session_ = session;
 
 	DWORD byte_recevied = 0;
 	if (false == SocketUtils::accept_ex(socket_, session->get_socket(), session->recv_buffer_, 0, 
@@ -102,7 +109,7 @@ void Listener::register_accept(AcceptEvent* accept_event)
 
 void Listener::process_accept(AcceptEvent* accept_event)
 {
-	auto session = accept_event->get_session();
+	auto session = accept_event->session_;
 
 	if (false == SocketUtils::set_update_accept_socket(session->get_socket(), socket_))
 	{

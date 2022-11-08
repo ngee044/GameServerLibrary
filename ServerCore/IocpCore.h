@@ -1,7 +1,7 @@
 #pragma once
 
 
-class IocpObject
+class IocpObject : public std::enable_shared_from_this<IocpObject>
 {
 public:
 	virtual HANDLE get_handle() abstract;
@@ -17,7 +17,7 @@ public:
 
 	HANDLE get_handle() { return iocp_handle_; }
 
-	bool iocp_register(class IocpObject* iocp_object);
+	bool iocp_register(std::shared_ptr<IocpObject> iocp_object);
 	bool iocp_dispatch(uint32 time_out = INFINITE);
 
 private:
@@ -25,4 +25,3 @@ private:
 	
 };
 
-extern IocpCore g_iocp_core;
