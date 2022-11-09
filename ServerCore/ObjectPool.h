@@ -31,9 +31,10 @@ public:
 #endif
 	}
 
-	static shared_ptr<Type> make_shared()
+	template<typename... Args>
+	static shared_ptr<Type> xmake_shared(Args&... args)
 	{
-		std::shared_ptr<Type> ptr = { pop(), push };
+		std::shared_ptr<Type> ptr = { pop(std::forward<Arg>(args)...), push };
 		return ptr;
 	}
 
