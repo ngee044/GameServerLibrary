@@ -12,8 +12,10 @@
 
 int main()
 {
-	auto service = std::make_shared<ServerService>(NetAddress(L"127.0.0.1", 7777), std::make_shared<IocpCore>(),
-		std::make_shared<Session>(), // TODO Session Manager
+	std::shared_ptr<ServerService> service = std::make_shared<ServerService>(
+		NetAddress(L"127.0.0.1", 7777), 
+		std::make_shared<IocpCore>(),
+		std::make_shared<Session>, // TODO Session Manager
 		100);
 
 	ASSERT_CRASH(service->start());

@@ -3,7 +3,6 @@
 #include "IocpCore.h"
 
 #include <functional>
-#include <memory>
 
 class Session;
 class Listener;
@@ -21,7 +20,7 @@ using SessionFactory = std::function<std::shared_ptr<Session>(void)>;
 class Service : public std::enable_shared_from_this<Service>
 {
 public:
-	Service(ServiceType service_type, NetAddress net_address, std::shared_ptr<IocpCore> iocp_core, SessionFactory session_factory, int32 max_session_count);
+	Service(ServiceType service_type, NetAddress net_address, std::shared_ptr<IocpCore> iocp_core, SessionFactory session_factory, int32 max_session_count = 1);
 	virtual ~Service();
 
 	virtual bool start() abstract;
@@ -53,6 +52,9 @@ protected:
 
 };
 
+
+/*
+*/
 class ClientService : public Service
 {
 public:
@@ -62,6 +64,9 @@ public:
 	virtual bool start() override;
 };
 
+
+/*
+*/
 class ServerService : public Service
 {
 public:

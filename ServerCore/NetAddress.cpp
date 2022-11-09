@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "NetAddress.h"
 
-NetAddress::NetAddress(SOCKADDR_IN sock_addr) :sock_addr_(sock_addr)
+NetAddress::NetAddress(SOCKADDR_IN sock_addr) : sock_addr_(sock_addr)
 {
 }
 
@@ -24,5 +24,5 @@ IN_ADDR NetAddress::ip_address(const WCHAR* ip)
 {
 	IN_ADDR address;
 	::InetPtonW(AF_INET, ip, &address);
-	return IN_ADDR();
+	return address;
 }

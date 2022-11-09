@@ -75,7 +75,7 @@ bool ServerService::start()
 		return false;
 	}
 
-	std::shared_ptr<ServerService> service = std::static_pointer_cast<ServerService>(shared_from_this());
+	auto service = static_pointer_cast<ServerService>(shared_from_this());
 	if (!listener_->start_accept(service))
 	{
 		return false;
