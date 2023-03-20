@@ -27,7 +27,7 @@ bool IocpCore::iocp_dispatch(uint32 time_out)
 
 	if (::GetQueuedCompletionStatus(iocp_handle_, OUT & num_of_bytes, OUT & key, OUT reinterpret_cast<LPOVERLAPPED*>(&iocp_event), time_out))
 	{
-		auto iocp_object = iocp_event->owner;
+		auto iocp_object = iocp_event->owner_;
 		iocp_object->iocp_dispatch(iocp_event, num_of_bytes);
 	}
 	else
@@ -39,7 +39,7 @@ bool IocpCore::iocp_dispatch(uint32 time_out)
 			return false;
 		default:
 			//TODO
-			auto iocp_object = iocp_event->owner;
+			auto iocp_object = iocp_event->owner_;
 			iocp_object->iocp_dispatch(iocp_event, num_of_bytes);
 			break;
 		}

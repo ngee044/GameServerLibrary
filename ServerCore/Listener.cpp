@@ -58,7 +58,7 @@ bool Listener::start_accept(std::shared_ptr<ServerService> service)
 	for (int32 i = 0; i < accept_count; i++)
 	{
 		AcceptEvent* accept_event = xnew<AcceptEvent>();
-		accept_event->owner = shared_from_this();
+		accept_event->owner_ = shared_from_this();
 		v_accept_events_.push_back(accept_event);
 		register_accept(accept_event);
 	}

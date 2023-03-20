@@ -23,7 +23,7 @@ public:
 	void init();
 
 	EventType event_type_;
-	std::shared_ptr<IocpObject> owner;
+	std::shared_ptr<IocpObject> owner_;
 
 };
 

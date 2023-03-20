@@ -1,0 +1,51 @@
+Select 모델
+장점) 윈도우/리눅스 공통
+단점) 성능 최하 (매번 등록 비용), 64개 제한
+
+WSAEventSelect모델
+장점) 비교적 뛰어난 성능
+단점) 64개 제한
+
+Overlapped (이벤트 기반)
+장점) 성능
+단점) 64개 제한
+
+Overlapped (콜백 기반)
+장점) 성능
+단점) 모든 비동기 소켓 함수에서 사용 가능하진 않음 (accept)  빈번한 Alertable Wait으로 인한 성능 저하
+
+Reactor Pattern (~뒤늦게, 논블로킹 소켓, 소켓 상태 확인 후 -> 뒤늦게 recv send 호출)
+Proactor Pattern (~미리. Overlapped WSA~)
+
+
+Overlapped 모델 (이벤트 기반)
+-비동기 입출력 지원하는 소켓 생성 + 통지 받기 위한 이벤트 객체 생성
+-비동기 입출력 함수 호출 (1에서 만든 이벤트 객체를 같이 넘겨줌)
+-비동기 작업이 바로 완료되지 않으면, WSA_IO_PENDING 오류 코드
+-비동기 입출력 함수 호출한 쓰레드를 -> Alertable Wait 상태로 만든다.
+
+운영체제는 이벤트 객체를 signaled 상태로 만들어서 완료 상태 알려줌
+WSAWaitForMultipleEvents 함수 호출해서 이벤트 객체의 signal 판별
+WSAGetOverlappedResult 호출해서 비동기 입출력 결과 확인 및 데이터 처리
+
+
+IOCP (Completion Port) 모델
+APC -> Completion Port (쓰레드마다 있는건 아니고 1개, 중앙에서 관리하는 APC 큐)
+Alertable Wait -> CP 결과 처리를 GetQueueCompletionsStatus
+쓰레드랑 궁합이 굉장히 좋다.
+
+CreateIoCompletionPort 시작 함수
+GetQueuedCompletionStatus 결과처리 함수
+
+
+
+
+
+
+
+
+
+
+
+
+
