@@ -126,6 +126,7 @@ void Listener::process_accept(AcceptEvent* accept_event)
 	}
 
 	session->set_net_address(NetAddress(sock_address));
+	session->process_connect();
 
 	std::cout << "Client Connected!" << std::endl;
 

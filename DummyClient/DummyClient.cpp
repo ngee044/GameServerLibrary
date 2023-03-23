@@ -188,6 +188,7 @@ int main()
 		}
 	}
 
+	std::cout << "[here client] " << std::endl;
 	std::cout << "Connected to server!" << std::endl;
 
 	char send_buffer[100] = "hello world";

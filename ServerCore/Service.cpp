@@ -19,6 +19,8 @@ Service::~Service()
 std::shared_ptr<Session> Service::create_session()
 {
 	auto session = session_factory_();
+	session->set_service(shared_from_this());
+
 	if (!iocp_core_->iocp_register(session))
 	{
 		return nullptr;
